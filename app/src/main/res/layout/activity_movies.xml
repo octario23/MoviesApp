@@ -1,17 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/moviesRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/item_demo_01"
-        android:layout_alignParentBottom="true"/>
-
-
-
-</RelativeLayout>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:id="@+id/fragment_movies"
+          android:name="com.movies.app.moviesapp.MoviesFragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          tools:context="com.movies.app.moviesapp.MoviesFragment"
+            />

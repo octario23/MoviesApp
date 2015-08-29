@@ -3,7 +3,18 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="pref_movies_key" translatable="false">movies</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">moviesapp.movies.com</string>
+
+    <string name="content_authority">com.movies.app.moviesapp</string>
+
+    <string name="section_title">My Nanodegree Apps!</string>
+    <string name="movies_app">Movies App</string>
+    <string name="scores_app">Scores App</string>
+    <string name="library_app">Library App</string>
+    <string name="built_app">Built it Bigger</string>
+    <string name="bacon_reader_app">Bacon Reader App</string>
+    <string name="capstone_app">Capstone App</string>
 </resources>
