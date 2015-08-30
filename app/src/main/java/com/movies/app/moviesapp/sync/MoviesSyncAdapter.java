@@ -34,7 +34,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = MoviesSyncAdapter.class.getSimpleName();
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 1;
+    public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int MOVIES_NOTIFICATION_ID = 3004;
@@ -60,7 +60,12 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
-        String locationQuery = CommonTasks.getDefaultFilter(getContext());
+        String locationQuery = "";
+        if(CommonTasks.isPopularFilter(getContext())){
+            locationQuery = MoviesContract.MoviesEntry.COLUMN_POPULARITY + " DESC";
+        }else{
+            locationQuery = MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE + " DESC";
+        }
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -71,7 +76,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         String forecastJsonStr = null;
 
         String sortBy = "popularity.desc";
-        String key = "855b728a711aebd622c8a53457b23f70";
+        String key = "API_KEY";
 
         try {
             // Construct the URL for the OpenWeatherMap query

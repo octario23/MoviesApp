@@ -17,4 +17,17 @@
     <string name="built_app">Built it Bigger</string>
     <string name="bacon_reader_app">Bacon Reader App</string>
     <string name="capstone_app">Capstone App</string>
+
+    <string name="pref_sort_label">Order By:</string>
+
+    <string name="pref_sort_key">sort</string>
+
+    <string name="pref_sort_most_popular">most_popular</string>
+
+    <string name="pref_sort_high_rate">high_rated</string>
+
+    <string name="pref_sort_label_most_popular">Most Popular</string>
+
+    <string name="pref_sort_label_high_rate">High Rated</string>
+    <string name="details_movie">Details Movie</string>
 </resources>

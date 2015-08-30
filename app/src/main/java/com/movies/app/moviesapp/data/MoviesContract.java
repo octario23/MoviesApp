@@ -33,13 +33,6 @@ public class MoviesContract {
 
     public static final String PATH_MOVIES = "movies";
 
-    public static long normalizeDate(long startDate) {
-        // normalize the start date to the beginning of the (UTC) day
-        Time time = new Time();
-        time.set(startDate);
-        int julianDay = Time.getJulianDay(startDate, time.gmtoff);
-        return time.setJulianDay(julianDay);
-    }
 
     public static final class MoviesEntry implements BaseColumns {
         public static final String TABLE_NAME = "movies";
@@ -77,19 +70,8 @@ public class MoviesContract {
             return CONTENT_URI;
         }
 
-        public static Uri buildWeatherLocationWithStartDate(
-                String locationSetting, long startDate) {
-            long normalizedDate = normalizeDate(startDate);
-            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                    .appendQueryParameter(COLUMN_RELEASE_DATE, Long.toString(normalizedDate)).build();
-        }
 
-        public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                    .appendPath(Long.toString(normalizeDate(date))).build();
-        }
-
-        public static String getLocationSettingFromUri(Uri uri) {
+        public static String getMovieIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
 

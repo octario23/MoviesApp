@@ -1,11 +1,13 @@
 package com.movies.app.moviesapp;
 
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,7 +23,7 @@ import com.movies.app.moviesapp.data.CommonTasks;
 import com.movies.app.moviesapp.data.MoviesContract;
 import com.movies.app.moviesapp.sync.MoviesSyncAdapter;
 
-public class MoviesFragment extends android.support.v4.app.Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MoviesFragment extends android.support.v4.app.Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int MOVIES_LOADER = 0;
     private MoviesAdapter mMoviesAdapter;
@@ -36,17 +38,20 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
             MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE,
     };
 
-    static final int COL_MOVIE_ID = 0;
-    static final int COL_RELEASE_DATE = 1;
-    static final int COL_TITLE = 2;
+    static final int COL_ID = 0;
+    static final int COL_TITLE = 1;
+    static final int COL_MOVIE_ID = 2;
     static final int COL_OVERVIEW = 3;
     static final int COL_THUMB_URL = 4;
     static final int COL_POPULARITY = 5;
-    static final int COL_VOTE_AVERAGE = 6;
+    static final int COL_RELEASE_DATE = 6;
+    static final int COL_VOTE_AVERAGE = 7;
     public static final String FRAGMENT_TAG = MoviesFragment.class.getSimpleName();
     private AdjustableRecyclerView mRecyclerView;
     private int mPosition = 0;
     private static final String SELECTED_KEY = "selected_position";
+    private String settings_key = "settings";
+
 
     public static MoviesFragment newInstance() {
         MoviesFragment fragment = new MoviesFragment();
@@ -63,6 +68,20 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
     }
 
     @Override
+    public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.registerOnSharedPreferenceChangeListener(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mMoviesAdapter = new MoviesAdapter(getActivity());
@@ -75,6 +94,7 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
         if(savedInstanceState !=null && savedInstanceState.containsKey(SELECTED_KEY)){
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
+
         return rootView;
     }
 
@@ -93,16 +113,19 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String locationSetting = CommonTasks.getDefaultFilter(getActivity());
-        String sortOrder =  MoviesContract.MoviesEntry.COLUMN_POPULARITY + " DESC";
         Uri weatherForLocationUri = MoviesContract.MoviesEntry.buildWeatherLocation("*");
-
+        if(CommonTasks.isPopularFilter(getActivity())){
+            settings_key = MoviesContract.MoviesEntry.COLUMN_POPULARITY + " DESC";
+        }
+        else{
+            settings_key = MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE + " DESC";
+        }
         return  new CursorLoader(getActivity(),
                 weatherForLocationUri,
                 MOVIES_COLUMNS,
                 null,
                 null,
-                sortOrder);
+                settings_key);
     }
 
     @Override
@@ -136,5 +159,15 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
     }
 
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if ( key.equals(getString(R.string.pref_sort_key)) ) {
+            if(CommonTasks.isPopularFilter(getActivity())){
+                settings_key = MoviesContract.MoviesEntry.COLUMN_POPULARITY + " DESC";
+            }else{
+                settings_key = MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE + " DESC";
+            }
+        }
+    }
 
 }

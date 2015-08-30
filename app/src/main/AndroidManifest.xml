@@ -28,7 +28,27 @@
         </activity>
         <activity
             android:name=".MoviesActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.movies.app.moviesapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/action_settings"
+            android:parentActivityName=".MoviesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.movies.app.moviesapp.MoviesActivity" />
+        </activity>
+        <activity
+            android:name=".DetailsActivity"
+            android:label="@string/details_movie"
+            android:parentActivityName=".MoviesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.movies.app.moviesapp.MoviesActivity" />
         </activity>
 
         <provider

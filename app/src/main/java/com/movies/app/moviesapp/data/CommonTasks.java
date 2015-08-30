@@ -11,8 +11,12 @@ import com.movies.app.moviesapp.R;
  */
 public class CommonTasks {
 
-    public static String getDefaultFilter(Context context) {
+    public static boolean isPopularFilter(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(context.getString(R.string.pref_movies_key), null);
+        return prefs.getString(context.getString(R.string.pref_sort_key),
+                context.getString(R.string.pref_sort_most_popular))
+                .equals(context.getString(R.string.pref_sort_most_popular));
     }
+
+
 }

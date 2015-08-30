@@ -1,26 +1,20 @@
 package com.movies.app.moviesapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.movies.app.moviesapp.data.CommonTasks;
 import com.movies.app.moviesapp.data.MoviesContract;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 /**
  * Created by omarin on 8/22/15.
  */
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> implements View.OnClickListener {
 
     private Context context;
     private Cursor mCursor;
@@ -41,9 +35,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         mCursor.moveToPosition(position);
         String url = "http://image.tmdb.org/t/p/w185" + mCursor.getString(MoviesFragment.COL_THUMB_URL);
+        int movieId = Integer.parseInt(mCursor.getString(MoviesFragment.COL_MOVIE_ID));
+
         Picasso.with(context).load(url)
                 .fit()
                 .into(holder.iconView);
+        holder.iconView.setTag(movieId);
+        holder.iconView.setOnClickListener(this);
     }
 
     @Override
@@ -62,6 +60,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     public Cursor getCursor() {
         return mCursor;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        int movie_id = (int) v.getTag();
+            Intent intent = new Intent(context, DetailsActivity.class)
+                    .setData(MoviesContract.MoviesEntry.buildMoviesUri(
+                            movie_id));
+            context.startActivity(intent);
     }
 
 
