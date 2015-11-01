@@ -3,6 +3,8 @@ package com.movies.app.moviesapp;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.movies.app.moviesapp.fragments.DetailFragment;
+
 public class DetailsActivity extends AppCompatActivity {
 
     @Override

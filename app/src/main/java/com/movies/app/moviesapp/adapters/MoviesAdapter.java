@@ -1,4 +1,4 @@
-package com.movies.app.moviesapp;
+package com.movies.app.moviesapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.movies.app.moviesapp.DetailsActivity;
+import com.movies.app.moviesapp.fragments.MoviesFragment;
+import com.movies.app.moviesapp.R;
 import com.movies.app.moviesapp.data.MoviesContract;
 import com.squareup.picasso.Picasso;
 

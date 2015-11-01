@@ -1,24 +1,22 @@
-package com.movies.app.moviesapp;
+package com.movies.app.moviesapp.fragments;
 
 
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.movies.app.moviesapp.AdjustableRecyclerView;
+import com.movies.app.moviesapp.R;
+import com.movies.app.moviesapp.adapters.MoviesAdapter;
 import com.movies.app.moviesapp.data.CommonTasks;
 import com.movies.app.moviesapp.data.MoviesContract;
 import com.movies.app.moviesapp.sync.MoviesSyncAdapter;
@@ -40,9 +38,9 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
 
     static final int COL_ID = 0;
     static final int COL_TITLE = 1;
-    static final int COL_MOVIE_ID = 2;
+    public static final int COL_MOVIE_ID = 2;
     static final int COL_OVERVIEW = 3;
-    static final int COL_THUMB_URL = 4;
+    public static final int COL_THUMB_URL = 4;
     static final int COL_POPULARITY = 5;
     static final int COL_RELEASE_DATE = 6;
     static final int COL_VOTE_AVERAGE = 7;
@@ -87,9 +85,7 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
         mMoviesAdapter = new MoviesAdapter(getActivity());
         View rootView = inflater.inflate(R.layout.movies_fragment,container, false);
         mRecyclerView = (AdjustableRecyclerView) rootView.findViewById(R.id.moviesRecycler);
-
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mMoviesAdapter);
         if(savedInstanceState !=null && savedInstanceState.containsKey(SELECTED_KEY)){
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
@@ -147,9 +143,8 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
         mMoviesAdapter.swapCursor(null);
     }
 
-    void onLocationChanged( ) {
+    public void onLocationChanged() {
         updateWeather();
-
         getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
     }
 

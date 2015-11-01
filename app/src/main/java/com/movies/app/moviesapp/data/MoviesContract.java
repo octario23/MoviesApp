@@ -32,6 +32,8 @@ public class MoviesContract {
 
 
     public static final String PATH_MOVIES = "movies";
+    public static final String PATH_TRAILERS = "trailers";
+    public static final String PATH_REVIEWS = "reviews";
 
 
     public static final class MoviesEntry implements BaseColumns {
@@ -85,6 +87,95 @@ public class MoviesContract {
                 return Long.parseLong(dateString);
             else
                 return 0;
+        }
+
+    }
+
+    public static final class TrailersEntry implements BaseColumns {
+        public static final String TABLE_NAME = "trailers";
+
+        public static final String COLUMN_TRAILER_ID = "id";
+
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+
+        public static final String COLUMN_FORMAT  = "iso_639_1";
+
+        public static final String COLUMN_KEY = "key";
+
+        public static final String COLUMN_NAME = "name";
+
+        public static final String COLUMN_SITE = "site";
+
+        public static final String COLUMN_SIZE = "size";
+
+        public static final String COLUMN_TYPE = "type";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILERS).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILERS;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILERS;
+
+        public static Uri buildMoviesUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildWeatherLocation(String locationSetting) {
+            return CONTENT_URI;
+        }
+
+
+        public static String getMovieIdFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static long getDateFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(2));
+        }
+
+    }
+
+    public static final class ReviewEntry implements BaseColumns {
+        public static final String TABLE_NAME = "reviews";
+
+        public static final String COLUMN_REVIEW_ID = "id";
+
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+
+        public static final String COLUMN_AUTHOR  = "author";
+
+        public static final String COLUMN_CONTENT = "content";
+
+        public static final String COLUMN_URL = "url";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEWS).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEWS;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEWS;
+
+        public static Uri buildMoviesUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        /*
+            Student: Fill in this buildWeatherLocation function
+         */
+        public static Uri buildWeatherLocation(String locationSetting) {
+            return CONTENT_URI;
+        }
+
+
+        public static String getMovieIdFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static long getDateFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(2));
         }
 
     }

@@ -1,4 +1,4 @@
-package com.movies.app.moviesapp;
+package com.movies.app.moviesapp.fragments;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,10 +10,12 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.movies.app.moviesapp.AdjustableRecyclerView;
+import com.movies.app.moviesapp.R;
+import com.movies.app.moviesapp.adapters.MoviesAdapter;
 import com.movies.app.moviesapp.data.MoviesContract;
 import com.squareup.picasso.Picasso;
 
@@ -55,6 +57,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView mReleaseDate;
     private TextView mRateVoting;
     private TextView mDescription;
+    private AdjustableRecyclerView mRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +74,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mReleaseDate = (TextView) rootView.findViewById(R.id.release_date);
         mRateVoting = (TextView) rootView.findViewById(R.id.rate);
         mDescription = (TextView) rootView.findViewById(R.id.description);
+        mRecyclerView = (AdjustableRecyclerView) rootView.findViewById(R.id.trailersRecycler);
         return rootView;
     }
 

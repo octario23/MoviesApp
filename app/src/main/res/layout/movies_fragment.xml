@@ -4,12 +4,12 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:elevation="4dp"
-             tools:context="com.movies.app.moviesapp.MoviesFragment">
+             tools:context="com.movies.app.moviesapp.fragments.MoviesFragment">
     <com.movies.app.moviesapp.AdjustableRecyclerView
         android:id="@+id/moviesRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/item_demo_01"
-        android:layout_alignParentBottom="true"/>
+        android:clipToPadding="false"
+        android:columnWidth="175dp"/>
 
 </FrameLayout>
