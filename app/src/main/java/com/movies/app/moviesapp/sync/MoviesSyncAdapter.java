@@ -157,7 +157,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
 //                        insert reviews
                         String jsonReview = null;
                         String urlReviews = "http://api.themoviedb.org/3/movie/"+movieId+"/reviews?";
-                        json = downloadContent(urlReviews,"",API_KEY);
+                        jsonReview = downloadContent(urlReviews,"",API_KEY);
                         getDataFromJson(jsonReview, "","reviews",movieId);
 
                     }
@@ -252,41 +252,41 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
             case "reviews":
                 final String RESULTS_REVIEW = "results";
                 final String COLUMN_REVIEW_ID = "id";
-                final String COLUMN_MOVIE_ID = "key";
-                final String COLUMN_AUTHOR = "name";
-                final String COLUMN_CONTENT = "site";
-                final String COLUMN_URL = "size";
+                final String COLUMN_AUTHOR = "author";
+                final String COLUMN_CONTENT = "content";
+                final String COLUMN_URL = "url";
 
                 try {
                     JSONObject forecastJson = new JSONObject(jsonStr);
                     JSONArray reviewArrays = forecastJson.getJSONArray(RESULTS_REVIEW);
                         // Insert  into the database
                         Vector<ContentValues> cVVector = new Vector<ContentValues>(reviewArrays.length());
+                        if(reviewArrays!=null) {
+                            for (int i = 0; i < reviewArrays.length(); i++) {
+                                // These are the values that will be collected.
+                                String reviewId;
+                                int movieId;
+                                String author;
+                                String content;
+                                String url;
 
-                        for (int i = 0; i < reviewArrays.length(); i++) {
-                            // These are the values that will be collected.
-                            String reviewId;
-                            int movieId;
-                            String author;
-                            String content;
-                            String url;
+                                // Get the JSON object representing a movie
+                                JSONObject movieItem = reviewArrays.getJSONObject(i);
+                                reviewId = movieItem.getString(COLUMN_REVIEW_ID);
+                                movieId = id;
+                                author = movieItem.getString(COLUMN_AUTHOR);
+                                content = movieItem.getString(COLUMN_CONTENT);
+                                url = movieItem.getString(COLUMN_URL);
 
-                            // Get the JSON object representing a movie
-                            JSONObject movieItem = reviewArrays.getJSONObject(i);
-                            reviewId = movieItem.getString(COLUMN_REVIEW_ID);
-                            movieId = id;
-                            author = movieItem.getString(COLUMN_AUTHOR);
-                            content = movieItem.getString(COLUMN_CONTENT);
-                            url = movieItem.getString(COLUMN_URL);
+                                ContentValues reviewValues = new ContentValues();
+                                reviewValues.put(MoviesContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
+                                reviewValues.put(MoviesContract.ReviewEntry.COLUMN_REVIEW_ID, reviewId);
+                                reviewValues.put(MoviesContract.ReviewEntry.COLUMN_AUTHOR, author);
+                                reviewValues.put(MoviesContract.ReviewEntry.COLUMN_CONTENT, content);
+                                reviewValues.put(MoviesContract.ReviewEntry.COLUMN_URL, url);
 
-                            ContentValues reviewValues = new ContentValues();
-                            reviewValues.put(MoviesContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
-                            reviewValues.put(MoviesContract.ReviewEntry.COLUMN_REVIEW_ID, reviewId);
-                            reviewValues.put(MoviesContract.ReviewEntry.COLUMN_AUTHOR, author);
-                            reviewValues.put(MoviesContract.ReviewEntry.COLUMN_CONTENT, content);
-                            reviewValues.put(MoviesContract.ReviewEntry.COLUMN_URL, url);
-
-                            cVVector.add(reviewValues);
+                                cVVector.add(reviewValues);
+                            }
                         }
 
                         int inserted = 0;

@@ -72,7 +72,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_REVIEWS_TABLE =  "CREATE TABLE " + MoviesContract.ReviewEntry.TABLE_NAME + " (" +
                 MoviesContract.ReviewEntry._ID +  " INTEGER PRIMARY KEY," +
-                MoviesContract.ReviewEntry.COLUMN_REVIEW_ID + " TEXT UNIQUE NOT NULL," +
+                MoviesContract.ReviewEntry.COLUMN_REVIEW_ID + " TEXT NOT NULL," +
                 MoviesContract.ReviewEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL," +
                 MoviesContract.ReviewEntry.COLUMN_AUTHOR +  " TEXT NOT NULL," +
                 MoviesContract.ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +

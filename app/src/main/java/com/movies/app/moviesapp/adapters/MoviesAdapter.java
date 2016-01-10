@@ -3,6 +3,7 @@ package com.movies.app.moviesapp.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     private Context context;
     private Cursor mCursor;
+
+    public interface OnClickCallback{
+        void onItemSelected(Uri elementUri);
+    }
 
     public MoviesAdapter(Context context){
         this.context = context;
@@ -70,10 +75,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public void onClick(View v) {
 
         int movie_id = (int) v.getTag();
-            Intent intent = new Intent(context, DetailsActivity.class)
-                    .setData(MoviesContract.MoviesEntry.buildMoviesUri(
-                            movie_id));
-            context.startActivity(intent);
+        ((OnClickCallback) context).onItemSelected(
+                MoviesContract.MoviesEntry.buildMoviesUriQuery(String.valueOf(movie_id))
+        );
+
     }
 
 

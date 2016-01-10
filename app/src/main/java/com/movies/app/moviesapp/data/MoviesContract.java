@@ -65,6 +65,9 @@ public class MoviesContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+        public static Uri buildMoviesUriQuery(String movieId) {
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+        }
         /*
             Student: Fill in this buildWeatherLocation function
          */
@@ -131,8 +134,8 @@ public class MoviesContract {
             return uri.getPathSegments().get(1);
         }
 
-        public static long getDateFromUri(Uri uri) {
-            return Long.parseLong(uri.getPathSegments().get(2));
+        public static Uri buildTrailerUriQuery(String movieId) {
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
         }
 
     }
@@ -170,13 +173,6 @@ public class MoviesContract {
         }
 
 
-        public static String getMovieIdFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
-        }
-
-        public static long getDateFromUri(Uri uri) {
-            return Long.parseLong(uri.getPathSegments().get(2));
-        }
 
     }
 }

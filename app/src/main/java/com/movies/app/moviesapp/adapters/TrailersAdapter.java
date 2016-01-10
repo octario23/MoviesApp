@@ -4,13 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.movies.app.moviesapp.DetailsActivity;
 import com.movies.app.moviesapp.R;
 import com.movies.app.moviesapp.data.MoviesContract;
+import com.movies.app.moviesapp.fragments.DetailFragment;
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHolder> implements View.OnClickListener {
 
@@ -22,13 +25,20 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
     }
 
     @Override
-    public TrailersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.trailer_list_item, parent, false);
+        view.setFocusable(true);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(TrailersAdapter.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        mCursor.moveToPosition(position);
+//        String url = "http://image.tmdb.org/t/p/w185" + mCursor.getString(DetailFragment.COL_THUMB_URL);
+//        int movieId = Integer.parseInt(mCursor.getString(DetailFragment.COL_MOVIE_ID));
+//        holder.iconView.setTag(movieId);
+//        holder.iconView.setOnClickListener(this);
+        holder.title.setText(mCursor.getString(DetailFragment.COL_TRAILER_NAME));
     }
 
     @Override
@@ -52,19 +62,21 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
     @Override
     public void onClick(View v) {
 
-        int movie_id = (int) v.getTag();
-        Intent intent = new Intent(context, DetailsActivity.class)
-                .setData(MoviesContract.MoviesEntry.buildMoviesUri(
-                        movie_id));
-        context.startActivity(intent);
+//        int movie_id = (int) v.getTag();
+//        Intent intent = new Intent(context, DetailsActivity.class)
+//                .setData(MoviesContract.MoviesEntry.buildMoviesUri(
+//                        movie_id));
+//        context.startActivity(intent);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public final ImageView iconView;
+        public final TextView title;
 
         public ViewHolder(View view){
             super(view);
-            iconView = (ImageView) view.findViewById(R.id.movie_poster);
+            iconView = (ImageView) view.findViewById(R.id.item_image);
+            title = (TextView) view.findViewById(R.id.extra_title);
 
         }
     }

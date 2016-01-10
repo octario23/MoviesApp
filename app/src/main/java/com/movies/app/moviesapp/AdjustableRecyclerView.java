@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 public class AdjustableRecyclerView extends RecyclerView {
     private GridLayoutManager manager;
     private int columnWidth = -1;
+
     public AdjustableRecyclerView(Context context) {
         super(context);
         init(context, null);
@@ -27,6 +28,7 @@ public class AdjustableRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
         init(context, attrs);
     }
+
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
             int[] attrsArray = {
@@ -40,6 +42,7 @@ public class AdjustableRecyclerView extends RecyclerView {
         manager = new GridLayoutManager(getContext(), 1);
         setLayoutManager(manager);
     }
+
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
@@ -55,5 +58,13 @@ public class AdjustableRecyclerView extends RecyclerView {
         velocityY *= 0.98;
 
         return super.fling(velocityX, velocityY);
+    }
+
+    public int getHorizontalOffset() {
+        return super.computeHorizontalScrollOffset();
+    }
+
+    public GridLayoutManager getLayoutManager() {
+        return manager;
     }
 }
