@@ -109,69 +109,73 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
                 try {
+
                     JSONObject forecastJson = new JSONObject(jsonStr);
                     JSONArray moviesArray = forecastJson.getJSONArray(OWM_LIST);
 
-                    // Insert  into the database
-                    Vector<ContentValues> cVVector = new Vector<ContentValues>(moviesArray.length());
+                    if(moviesArray!=null) {
+                        // Insert  into the database
+                        Vector<ContentValues> cVVector = new Vector<ContentValues>(moviesArray.length());
 
-                    for(int i = 0; i < moviesArray.length(); i++) {
-                        // These are the values that will be collected.
-                        int movieId;
-                        String title;
-                        String overview;
-                        String release_date;
-                        String poster_path;
-                        String popularity;
-                        String rating;
-
-
-                        // Get the JSON object representing a movie
-                        JSONObject movieItem = moviesArray.getJSONObject(i);
-                        title = movieItem.getString(TITLE);
-                        movieId = movieItem.getInt(MOVIE_ID);
-                        overview = movieItem.getString(OVERVIEW);
-                        release_date = movieItem.getString(RELEASE_DATE);
-                        poster_path = movieItem.getString(POSTER_PATH);
-                        popularity = movieItem.getString(POPULARITY);
-                        rating = movieItem.getString(RATING);
+                        for (int i = 0; i < moviesArray.length(); i++) {
+                            // These are the values that will be collected.
+                            int movieId;
+                            String title;
+                            String overview;
+                            String release_date;
+                            String poster_path;
+                            String popularity;
+                            String rating;
 
 
-                        ContentValues movieValues = new ContentValues();
-                        Log.i("SyncAdapter",title);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID, movieId);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, title);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_OVERVIEW, overview);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_RELEASE_DATE, release_date);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_THUMB_URL, poster_path);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE, rating);
-                        movieValues.put(MoviesContract.MoviesEntry.COLUMN_POPULARITY, popularity);
+                            // Get the JSON object representing a movie
+                            JSONObject movieItem = moviesArray.getJSONObject(i);
+                            title = movieItem.getString(TITLE);
+                            movieId = movieItem.getInt(MOVIE_ID);
+                            overview = movieItem.getString(OVERVIEW);
+                            release_date = movieItem.getString(RELEASE_DATE);
+                            poster_path = movieItem.getString(POSTER_PATH);
+                            popularity = movieItem.getString(POPULARITY);
+                            rating = movieItem.getString(RATING);
 
-                        cVVector.add(movieValues);
+
+                            ContentValues movieValues = new ContentValues();
+                            Log.i("SyncAdapter", title);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID, movieId);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, title);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_OVERVIEW, overview);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_RELEASE_DATE, release_date);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_THUMB_URL, poster_path);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE, rating);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_POPULARITY, popularity);
+                            movieValues.put(MoviesContract.MoviesEntry.COLUMN_FAVORITE, false);
+
+                            cVVector.add(movieValues);
 //                        insert trailers
-                        String json = null;
-                        String urlTrailers = "http://api.themoviedb.org/3/movie/"+movieId+"/videos?";
-                        json = downloadContent(urlTrailers,"",API_KEY);
-                        getDataFromJson(json, "", "trailers", movieId);
+                            String json = null;
+                            String urlTrailers = "http://api.themoviedb.org/3/movie/" + movieId + "/videos?";
+                            json = downloadContent(urlTrailers, "", API_KEY);
+                            getDataFromJson(json, "", "trailers", movieId);
 
 //                        insert reviews
-                        String jsonReview = null;
-                        String urlReviews = "http://api.themoviedb.org/3/movie/"+movieId+"/reviews?";
-                        jsonReview = downloadContent(urlReviews,"",API_KEY);
-                        getDataFromJson(jsonReview, "","reviews",movieId);
+                            String jsonReview = null;
+                            String urlReviews = "http://api.themoviedb.org/3/movie/" + movieId + "/reviews?";
+                            jsonReview = downloadContent(urlReviews, "", API_KEY);
+                            getDataFromJson(jsonReview, "", "reviews", movieId);
 
+                        }
+
+                        int inserted = 0;
+                        // add to database
+                        if (cVVector.size() > 0) {
+                            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                            cVVector.toArray(cvArray);
+                            getContext().getContentResolver().bulkInsert(MoviesContract.MoviesEntry.CONTENT_URI, cvArray);
+
+                        }
+
+                        Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
                     }
-
-                    int inserted = 0;
-                    // add to database
-                    if ( cVVector.size() > 0 ) {
-                        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                        cVVector.toArray(cvArray);
-                        getContext().getContentResolver().bulkInsert(MoviesContract.MoviesEntry.CONTENT_URI, cvArray);
-
-                    }
-
-                    Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
 
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
@@ -191,57 +195,58 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                 try {
                     JSONObject forecastJson = new JSONObject(jsonStr);
                     JSONArray trailersArray = forecastJson.getJSONArray(RESULTS_TRAILER);
+                    if(trailersArray!=null) {
+                        // Insert  into the database
+                        Vector<ContentValues> cVVector = new Vector<ContentValues>(trailersArray.length());
 
-                    // Insert  into the database
-                    Vector<ContentValues> cVVector = new Vector<ContentValues>(trailersArray.length());
-
-                    for(int i = 0; i < trailersArray.length(); i++) {
-                        // These are the values that will be collected.
-                        String trailerId;
-                        int movieId;
-                        String key;
-                        String name;
-                        String site;
-                        String size;
-                        String typeTrailer;
-                        String format;
-
-
-                        // Get the JSON object representing a movie
-                        JSONObject movieItem = trailersArray.getJSONObject(i);
-                        trailerId = movieItem.getString(COLUMN_TRAILER_ID);
-                        movieId = id;
-                        key = movieItem.getString(COLUMN_KEY);
-                        name = movieItem.getString(COLUMN_NAME);
-                        site = movieItem.getString(COLUMN_SITE);
-                        size = movieItem.getString(COLUMN_SIZE);
-                        typeTrailer = movieItem.getString(COLUMN_TYPE);
-                        format = movieItem.getString(COLUMN_FORMAT);
+                        for (int i = 0; i < trailersArray.length(); i++) {
+                            // These are the values that will be collected.
+                            String trailerId;
+                            int movieId;
+                            String key;
+                            String name;
+                            String site;
+                            String size;
+                            String typeTrailer;
+                            String format;
 
 
-                        ContentValues trailerValues = new ContentValues();
-                        Log.i("SyncAdapter",name);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_MOVIE_ID, movieId);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_TRAILER_ID, trailerId);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_KEY, key);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_NAME, name);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_SITE, site);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_SIZE, size);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_TYPE, typeTrailer);
-                        trailerValues.put(MoviesContract.TrailersEntry.COLUMN_FORMAT, format);
+                            // Get the JSON object representing a movie
+                            JSONObject movieItem = trailersArray.getJSONObject(i);
+                            trailerId = movieItem.getString(COLUMN_TRAILER_ID);
+                            movieId = id;
+                            key = movieItem.getString(COLUMN_KEY);
+                            name = movieItem.getString(COLUMN_NAME);
+                            site = movieItem.getString(COLUMN_SITE);
+                            size = movieItem.getString(COLUMN_SIZE);
+                            typeTrailer = movieItem.getString(COLUMN_TYPE);
+                            format = movieItem.getString(COLUMN_FORMAT);
 
-                        cVVector.add(trailerValues);
+
+                            ContentValues trailerValues = new ContentValues();
+                            Log.i("SyncAdapter", name);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_MOVIE_ID, movieId);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_TRAILER_ID, trailerId);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_KEY, key);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_NAME, name);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_SITE, site);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_SIZE, size);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_TYPE, typeTrailer);
+                            trailerValues.put(MoviesContract.TrailersEntry.COLUMN_FORMAT, format);
+
+                            cVVector.add(trailerValues);
+                        }
+
+                        int inserted = 0;
+                        // add to database
+                        if (cVVector.size() > 0) {
+                            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                            cVVector.toArray(cvArray);
+                            getContext().getContentResolver().bulkInsert(MoviesContract.TrailersEntry.CONTENT_URI, cvArray);
+                        }
+
+                        Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
                     }
-
-                    int inserted = 0;
-                    // add to database
-                    if ( cVVector.size() > 0 ) {
-                        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                        cVVector.toArray(cvArray);
-                        getContext().getContentResolver().bulkInsert(MoviesContract.TrailersEntry.CONTENT_URI, cvArray);
-                    }
-
-                    Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
 
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
@@ -260,8 +265,8 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                     JSONObject forecastJson = new JSONObject(jsonStr);
                     JSONArray reviewArrays = forecastJson.getJSONArray(RESULTS_REVIEW);
                         // Insert  into the database
+                    if(reviewArrays!=null) {
                         Vector<ContentValues> cVVector = new Vector<ContentValues>(reviewArrays.length());
-                        if(reviewArrays!=null) {
                             for (int i = 0; i < reviewArrays.length(); i++) {
                                 // These are the values that will be collected.
                                 String reviewId;
@@ -287,7 +292,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
 
                                 cVVector.add(reviewValues);
                             }
-                        }
+
 
                         int inserted = 0;
                         // add to database
@@ -298,7 +303,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
                         }
 
                         Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
-
+                    }
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
                     e.printStackTrace();

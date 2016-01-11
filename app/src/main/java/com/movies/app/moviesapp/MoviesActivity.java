@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.movies.app.moviesapp.adapters.MoviesAdapter;
+import com.movies.app.moviesapp.data.CommonTasks;
 import com.movies.app.moviesapp.fragments.DetailFragment;
 import com.movies.app.moviesapp.fragments.MoviesFragment;
 import com.movies.app.moviesapp.sync.MoviesSyncAdapter;
@@ -17,6 +18,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
 
     private FragmentManager fm;
     public static boolean mTwoPane;
+    private boolean updatedRows;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,29 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
         }
 
         MoviesSyncAdapter.initializeSyncAdapter(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // update the location in our second pane using the fragment manager
+        if (!updatedRows) {
+            MoviesFragment ff = (MoviesFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
+            if ( null != ff ) {
+                ff.onOrderChanged();
+            }
+//            DetailFragment df = (DetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+//            if ( null != df ) {
+//                df.onLocationChanged(location);
+//            }
+            updatedRows = true;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updatedRows = false;
     }
 
     @Override

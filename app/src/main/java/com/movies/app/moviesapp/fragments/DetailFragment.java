@@ -1,5 +1,6 @@
 package com.movies.app.moviesapp.fragments;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,7 +26,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by omarin on 8/29/15.
  */
-public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener {
 
     public static final String FRAGMENT_TAG = DetailFragment.class.getSimpleName();
     public static final String DETAIL_URI = "URI";
@@ -45,7 +47,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             MoviesContract.MoviesEntry.COLUMN_THUMB_URL,
             MoviesContract.MoviesEntry.COLUMN_POPULARITY,
             MoviesContract.MoviesEntry.COLUMN_RELEASE_DATE,
-            MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE
+            MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE,
+            MoviesContract.MoviesEntry.COLUMN_FAVORITE
     };
 
     private static final String[] TRAILER_COLUMNS = {
@@ -76,6 +79,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_POPULARITY = 5;
     static final int COL_RELEASE_DATE = 6;
     static final int COL_VOTE_AVERAGE = 7;
+    static final int COL_FAVORITE = 8;
 
     public static final int COL_TRAILER_TABLE_ID = 0;
     public static final int COL_TRAILER_NAME = 1;
@@ -104,6 +108,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private AdjustableRecyclerView mReviewRecycler;
     private ReviewsAdapter mReviewAdapter;
     private Uri mReviewUri;
+    private ImageButton mFavoriteSort;
+    private int mFavoriteEnabled;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,6 +139,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mReviewAdapter = new ReviewsAdapter(getActivity());
         mReviewRecycler.setHasFixedSize(true);
         mReviewRecycler.setAdapter(mReviewAdapter);
+        mFavoriteSort = (ImageButton) rootView.findViewById(R.id.favorite_star);
+        mFavoriteSort.setTag(mTrailerId);
+        mFavoriteSort.setOnClickListener(this);
         return rootView;
     }
 
@@ -198,6 +207,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     // Read weather condition ID from cursor
                     String title = data.getString(COL_TITLE);
                     mMovieTitle.setText(title);
+                    mFavoriteEnabled = data.getInt(COL_FAVORITE);
+                    if(mFavoriteEnabled==0){
+                        mFavoriteSort.setImageDrawable(getResources().getDrawable(R.mipmap.ic_toggle_star_outline));
+                    }else{
+                        mFavoriteSort.setImageDrawable(getResources().getDrawable(R.mipmap.ic_toggle_star));
+                    }
                     mReleaseDate.setText(data.getString(COL_RELEASE_DATE));
                     mRateVoting.setText(data.getString(COL_VOTE_AVERAGE));
                     mDescription.setText(data.getString(COL_OVERVIEW));
@@ -222,5 +237,40 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoaderReset(Loader<Cursor> loader) {
         mTrailersAdapter.swapCursor(null);
         mReviewAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v instanceof ImageButton){
+            String movieId = (String) v.getTag();
+
+            if(movieId!=null) {
+                if (mFavoriteEnabled == 0) {
+                    updateFavoriteValue(true,movieId);
+                    ((ImageButton) v).setImageDrawable(getResources().getDrawable(R.mipmap.ic_toggle_star));
+                } else if (mFavoriteEnabled == 1) {
+                    updateFavoriteValue(false,movieId);
+                    ((ImageButton) v).setImageDrawable(getResources().getDrawable(R.mipmap.ic_toggle_star_outline));
+                }
+            }
+        }
+    }
+
+    private void updateFavoriteValue(boolean value, String movieId){
+        ContentValues mUpdateValues = new ContentValues();
+
+        String[] selectionArgs = new String[]{movieId};
+// Defines selection criteria for the rows you want to update
+        String mSelectionClause = MoviesContract.MoviesEntry.TABLE_NAME+
+                "." + MoviesContract.MoviesEntry.COLUMN_MOVIE_ID + " = ? ";
+
+        mUpdateValues.put(MoviesContract.MoviesEntry.COLUMN_FAVORITE,value);
+
+        int mRowsUpdated = getActivity().getContentResolver().update(
+                MoviesContract.MoviesEntry.CONTENT_URI,
+                mUpdateValues,
+                mSelectionClause,
+                selectionArgs                     
+        );
     }
 }

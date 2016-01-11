@@ -26,8 +26,12 @@
 
     <string name="pref_sort_high_rate">high_rated</string>
 
+    <string name="pref_sort_favorite_movies">favorite_movies</string>
+
     <string name="pref_sort_label_most_popular">Most Popular</string>
 
     <string name="pref_sort_label_high_rate">High Rated</string>
+
+    <string name="pref_sort_label_favorite_movies">Favorite Movies</string>
     <string name="details_movie">Details Movie</string>
 </resources>

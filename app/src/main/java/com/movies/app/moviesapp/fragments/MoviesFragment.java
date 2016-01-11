@@ -107,10 +107,18 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
 
 
 
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri weatherForLocationUri = MoviesContract.MoviesEntry.buildWeatherLocation("*");
+        String mSelectionClause = null;
         if(CommonTasks.isPopularFilter(getActivity())){
+            settings_key = MoviesContract.MoviesEntry.COLUMN_POPULARITY + " DESC";
+        }
+        else if(CommonTasks.isFavoriteFilter(getActivity())){
+             mSelectionClause = MoviesContract.MoviesEntry.TABLE_NAME+
+                    "." + MoviesContract.MoviesEntry.COLUMN_FAVORITE + " = 1 ";
+
             settings_key = MoviesContract.MoviesEntry.COLUMN_POPULARITY + " DESC";
         }
         else{
@@ -119,7 +127,7 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
         return  new CursorLoader(getActivity(),
                 weatherForLocationUri,
                 MOVIES_COLUMNS,
-                null,
+                mSelectionClause,
                 null,
                 settings_key);
     }
@@ -143,8 +151,7 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
         mMoviesAdapter.swapCursor(null);
     }
 
-    public void onLocationChanged() {
-        updateWeather();
+    public void onOrderChanged() {
         getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
     }
 
