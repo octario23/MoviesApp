@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.movies.app.moviesapp.AdjustableRecyclerView;
 import com.movies.app.moviesapp.R;
 import com.movies.app.moviesapp.adapters.MoviesAdapter;
+import com.movies.app.moviesapp.adapters.ReviewsAdapter;
 import com.movies.app.moviesapp.adapters.TrailersAdapter;
 import com.movies.app.moviesapp.data.MoviesContract;
 import com.squareup.picasso.Picasso;
@@ -34,6 +35,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final int DETAIL_LOADER = 0;
     private static final int TRAILER_LOADER = 1;
+    private static final int REVIEW_LOADER = 2;
     private MoviesAdapter mDetailAdapter;
     private static final String[] MOVIES_COLUMNS = {
             MoviesContract.MoviesEntry.TABLE_NAME + "." + MoviesContract.MoviesEntry._ID,
@@ -57,6 +59,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             MoviesContract.TrailersEntry.COLUMN_SITE
     };
 
+    private static final String[] REVIEW_COLUMNS = {
+            MoviesContract.ReviewEntry.TABLE_NAME + "." + MoviesContract.ReviewEntry._ID,
+            MoviesContract.ReviewEntry.COLUMN_REVIEW_ID,
+            MoviesContract.ReviewEntry.COLUMN_MOVIE_ID,
+            MoviesContract.ReviewEntry.COLUMN_AUTHOR,
+            MoviesContract.ReviewEntry.COLUMN_CONTENT,
+            MoviesContract.ReviewEntry.COLUMN_URL
+    };
+
     static final int COL_ID = 0;
     static final int COL_TITLE = 1;
     static final int COL_MOVIE_ID = 2;
@@ -75,6 +86,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public static final int COL_TRAILER_SIZE = 6;
     public static final int COL_TRAILER_SITE = 7;
 
+    public static final int COL_REVIEW_TABLE_ID = 0;
+    public static final int COL_REVIEW_ID = 1;
+    public static final int COL_REVIEW_MOVIE_ID = 2;
+    public static final int COL_REVIEW_AUTHOR = 3;
+    public static final int COL_REVIEW_CONTENT = 4;
+    public static final int COL_REVIEW_URL = 5;
+
     private ImageView mImageView;
     private TextView mMovieTitle;
     private TextView mReleaseDate;
@@ -83,6 +101,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private AdjustableRecyclerView mRecyclerView;
     private String mTrailerId;
     private Uri mTrailerUri;
+    private AdjustableRecyclerView mReviewRecycler;
+    private ReviewsAdapter mReviewAdapter;
+    private Uri mReviewUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,7 +113,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (arguments != null) {
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
         }
-        mTrailerId =  MoviesContract.MoviesEntry.getMovieIdFromUri(mUri);
+        if(mUri!=null) {
+            mTrailerId = MoviesContract.MoviesEntry.getMovieIdFromUri(mUri);
+            mTrailerUri = MoviesContract.TrailersEntry.buildTrailerUriQuery(String.valueOf(mTrailerId));
+            mReviewUri = MoviesContract.ReviewEntry.buildReviewUriQuery(String.valueOf(mTrailerId));
+        }
 
         View rootView = inflater.inflate(R.layout.detail_fragment, container, false);
         mImageView = (ImageView) rootView.findViewById(R.id.image_movie);
@@ -104,7 +129,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mTrailersAdapter = new TrailersAdapter(getActivity());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mTrailersAdapter);
-        mTrailerUri = MoviesContract.TrailersEntry.buildTrailerUriQuery(String.valueOf(mTrailerId));
+        mReviewRecycler = (AdjustableRecyclerView) rootView.findViewById(R.id.reviewRecycler);
+        mReviewAdapter = new ReviewsAdapter(getActivity());
+        mReviewRecycler.setHasFixedSize(true);
+        mReviewRecycler.setAdapter(mReviewAdapter);
         return rootView;
     }
 
@@ -112,42 +140,58 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         getLoaderManager().initLoader(TRAILER_LOADER, null, this);
+        getLoaderManager().initLoader(REVIEW_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(id == DETAIL_LOADER) {
-            if (null != mUri) {
-                // Now create and return a CursorLoader that will take care of
-                // creating a Cursor for the data being displayed.
-                return new CursorLoader(
-                        getActivity(),
-                        mUri,
-                        MOVIES_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
-            }
-        }else if(id == TRAILER_LOADER){
-            if(mTrailerUri !=null){
-                return new CursorLoader(
-                        getActivity(),
-                        mTrailerUri,
-                        TRAILER_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
-            }
+        switch(id){
+            case DETAIL_LOADER:
+                if (null != mUri) {
+                    // Now create and return a CursorLoader that will take care of
+                    // creating a Cursor for the data being displayed.
+                    return new CursorLoader(
+                            getActivity(),
+                            mUri,
+                            MOVIES_COLUMNS,
+                            null,
+                            null,
+                            null
+                    );
+                }
+                break;
+            case TRAILER_LOADER:
+                if(mTrailerUri !=null){
+                    return new CursorLoader(
+                            getActivity(),
+                            mTrailerUri,
+                            TRAILER_COLUMNS,
+                            null,
+                            null,
+                            null
+                    );
+                }
+                break;
+
+            case REVIEW_LOADER:
+                if(mReviewUri !=null){
+                    return new CursorLoader(
+                            getActivity(),
+                            mReviewUri,
+                            REVIEW_COLUMNS,
+                            null,
+                            null,
+                            null
+                    );
+                }
+                break;
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//        loader.
         switch(loader.getId()){
             case DETAIL_LOADER:
                 if (data != null && data.moveToFirst()) {
@@ -167,11 +211,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             case TRAILER_LOADER:
                 mTrailersAdapter.swapCursor(data);
                 break;
+
+            case REVIEW_LOADER:
+                mReviewAdapter.swapCursor(data);
+                break;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mTrailersAdapter.swapCursor(null);
+        mReviewAdapter.swapCursor(null);
     }
 }

@@ -4,5 +4,5 @@
           android:name="com.movies.app.moviesapp.fragments.MoviesFragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          tools:context="com.movies.app.moviesapp.fragments.MoviesFragment"
+          tools:context="com.movies.app.moviesapp.MoviesActivity"
             />

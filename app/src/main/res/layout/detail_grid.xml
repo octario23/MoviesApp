@@ -10,7 +10,7 @@
     android:scrollbars="none">
      <RelativeLayout
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="match_parent"
               android:background="@android:color/white">
 
             <TextView
@@ -128,11 +128,35 @@
             <com.movies.app.moviesapp.AdjustableRecyclerView
                 android:id="@+id/trailersRecycler"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="128dp"
                 android:clipToPadding="false"
                 app:layout_column="0" app:layout_columnSpan="2"
                 android:layout_below="@+id/adapterTitle" android:layout_marginTop="10dp"
                 android:layout_alignParentEnd="true"/>
+
+         <TextView
+             android:id="@+id/adapterReviewTitle"
+             android:maxHeight="80dp"
+             app:layout_column="0"
+             android:fontFamily="sans-serif-light"
+             android:text="Reviews:"
+             android:textSize="16sp"
+             android:layout_width="match_parent"
+             app:layout_gravity="fill_horizontal"
+             android:layout_marginTop="8dp"
+             android:layout_height="wrap_content"
+             android:layout_below="@+id/trailersRecycler"
+             android:layout_alignParentLeft="true"
+             android:layout_alignParentStart="true"/>
+
+             <com.movies.app.moviesapp.AdjustableRecyclerView
+                 android:id="@+id/reviewRecycler"
+                 android:layout_width="match_parent"
+                 android:layout_height="128dp"
+                 android:clipToPadding="false"
+                 app:layout_column="0" app:layout_columnSpan="2"
+                 android:layout_below="@+id/adapterReviewTitle" android:layout_marginTop="10dp"
+                 android:layout_alignParentEnd="true"/>
 
     </RelativeLayout>
 </ScrollView>

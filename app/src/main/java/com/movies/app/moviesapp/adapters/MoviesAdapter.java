@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.movies.app.moviesapp.DetailsActivity;
+import com.movies.app.moviesapp.MoviesActivity;
 import com.movies.app.moviesapp.fragments.MoviesFragment;
 import com.movies.app.moviesapp.R;
 import com.movies.app.moviesapp.data.MoviesContract;
@@ -23,6 +24,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     private Context context;
     private Cursor mCursor;
+    private boolean firstItemSelected;
 
     public interface OnClickCallback{
         void onItemSelected(Uri elementUri);
@@ -51,6 +53,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 .into(holder.iconView);
         holder.iconView.setTag(movieId);
         holder.iconView.setOnClickListener(this);
+        if(MoviesActivity.mTwoPane && position==0 && !firstItemSelected){
+            ((OnClickCallback) context).onItemSelected(
+                    MoviesContract.MoviesEntry.buildMoviesUriQuery(String.valueOf(movieId))
+            );
+            firstItemSelected = true;
+        }
     }
 
     @Override

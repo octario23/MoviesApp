@@ -3,7 +3,6 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:elevation="4dp"
              tools:context="com.movies.app.moviesapp.fragments.MoviesFragment">
     <com.movies.app.moviesapp.AdjustableRecyclerView
         android:id="@+id/moviesRecycler"

@@ -16,18 +16,18 @@ import com.movies.app.moviesapp.sync.MoviesSyncAdapter;
 public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.OnClickCallback {
 
     private FragmentManager fm;
-    private boolean mTwoPane;
+    public static boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
-        if (findViewById(R.id.weather_detail_container) != null) {
+        if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailFragment(), DetailFragment.FRAGMENT_TAG)
+                        .replace(R.id.movie_detail_container, new DetailFragment(), DetailFragment.FRAGMENT_TAG)
                         .commit();
             }
         }else {
@@ -70,7 +70,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesAdapter.O
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.weather_detail_container,fragment,DetailFragment.FRAGMENT_TAG)
+                    .replace(R.id.movie_detail_container,fragment,DetailFragment.FRAGMENT_TAG)
                     .commit();
         }else{
             Intent intent  = new Intent(this, DetailsActivity.class)

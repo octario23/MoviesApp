@@ -53,6 +53,8 @@ public class MoviesContract {
 
         public static final String COLUMN_POPULARITY = "popularity";
 
+        public static final String COLUMN_FAVORITE = "favorite";
+
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES).build();
 
@@ -125,11 +127,6 @@ public class MoviesContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildWeatherLocation(String locationSetting) {
-            return CONTENT_URI;
-        }
-
-
         public static String getMovieIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
@@ -165,11 +162,12 @@ public class MoviesContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        /*
-            Student: Fill in this buildWeatherLocation function
-         */
-        public static Uri buildWeatherLocation(String locationSetting) {
-            return CONTENT_URI;
+        public static Uri buildReviewUriQuery(String movieId) {
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+        }
+
+        public static String getMovieIdFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
         }
 
 

@@ -37,6 +37,7 @@ public class MoviesProvider extends ContentProvider {
     static final int TRAILER = 200;
     static final int TRAILER_WITH_ID = 201 ;
     static final int REVIEW = 300;
+    static final int REVIEW_WITH_ID = 301;
 
     private static final String sMoviesIdSelection =
             MoviesContract.MoviesEntry.TABLE_NAME+
@@ -47,7 +48,7 @@ public class MoviesProvider extends ContentProvider {
                     "." + MoviesContract.TrailersEntry.COLUMN_MOVIE_ID + " = ? ";
 
     private static final String sReviewIdSelection =
-            MoviesContract.MoviesEntry.TABLE_NAME+
+            MoviesContract.ReviewEntry.TABLE_NAME+
                     "." + MoviesContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? ";
 
     private static final SQLiteQueryBuilder sMovieTrailerReviewQueryBuilder;
@@ -114,6 +115,26 @@ public class MoviesProvider extends ContentProvider {
         );
     }
 
+    private Cursor getReviewWithId(Uri uri , String[] projection, String sortOrder){
+        String movieId = MoviesContract.ReviewEntry.getMovieIdFromUri(uri);
+
+        String[] selectionArgs;
+        String selection;
+
+        selection = sReviewIdSelection;
+        selectionArgs = new String[]{movieId};
+
+        return mOpenHelper.getReadableDatabase().query(
+                MoviesContract.ReviewEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
 
     static UriMatcher buildUriMatcher() {
 
@@ -126,6 +147,7 @@ public class MoviesProvider extends ContentProvider {
         matcher.addURI(authority, MoviesContract.PATH_TRAILERS, TRAILER);
         matcher.addURI(authority, MoviesContract.PATH_TRAILERS + "/*", TRAILER_WITH_ID);
         matcher.addURI(authority, MoviesContract.PATH_REVIEWS, REVIEW);
+        matcher.addURI(authority, MoviesContract.PATH_REVIEWS + "/*", REVIEW_WITH_ID);
 
         return matcher;
     }
@@ -154,6 +176,8 @@ public class MoviesProvider extends ContentProvider {
             case TRAILER_WITH_ID:
                 return MoviesContract.TrailersEntry.CONTENT_TYPE;
             case REVIEW:
+                return MoviesContract.ReviewEntry.CONTENT_TYPE;
+            case REVIEW_WITH_ID:
                 return MoviesContract.ReviewEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -209,6 +233,11 @@ public class MoviesProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                break;
+            }
+
+            case REVIEW_WITH_ID:{
+                retCursor = getReviewWithId(uri,projection,sortOrder);
                 break;
             }
             default:

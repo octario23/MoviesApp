@@ -127,9 +127,9 @@ public class MoviesFragment extends android.support.v4.app.Fragment implements L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mMoviesAdapter.swapCursor(data);
-//        if(mPosition !=ListView.INVALID_POSITION){
-//            mListView.smoothScrollToPosition(mPosition);
-//        }
+        if(mPosition !=ListView.INVALID_POSITION){
+            mRecyclerView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override
