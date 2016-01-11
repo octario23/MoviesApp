@@ -417,7 +417,7 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
         Uri builtUri = null;
 
                 String sortBy = "popularity.desc";
-        String key = "855b728a711aebd622c8a53457b23f70";
+        String key = "";
 
         // Will contain the raw JSON response as a string.
         String forecastJsonStr = null;
